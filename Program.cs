@@ -7,7 +7,6 @@ namespace Challenges
     {
         // change to private?
         static Challenges01 _challenges = new Challenges01();
-        static List<int> solutionsCount = new List<int>(){1,2,3,4,5};
         
         static void Main(string[] args)
         {
@@ -18,10 +17,10 @@ namespace Challenges
 
 
             // user input for specific solution (1-5)
-            Console.WriteLine($"\"0\" to Quit or Input a number from {solutionsCount[0]} to {solutionsCount[solutionsCount.Count-1]}: ");
             int input = 0;
             do
             {
+                Console.WriteLine($"\"0\" to Quit or Input a number from 1 to {_challenges.GetFunctionsCount()}: ");
                 try
                 {
                     input = Convert.ToInt32(Console.ReadLine());
@@ -32,6 +31,7 @@ namespace Challenges
                 }
                
                 _challenges.RunSolution(input);
+                Console.WriteLine(); // space after solutions run
             } while (input != 0);
         }
     }
