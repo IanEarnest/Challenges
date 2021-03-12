@@ -16,7 +16,8 @@ Version 0.0.1 - just started
 - &#x2611; Multiples Of 3 And 5
 	
 &#9744; Stage 2
-- &#9744; Fib sequence
+- &#x2611; Fib sequence
+- &#9744; Largest Prime Factor
 
 Map
 
