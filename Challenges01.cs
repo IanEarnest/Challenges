@@ -17,13 +17,15 @@ namespace Challenges
             _listOfFunctions.Add(() => SolutionMultiplesOf3And5());             // 2 = ... 
             _listOfFunctions.Add(() => SolutionEvenFibonacciNumbers());         // 3 = ... 
             _listOfFunctions.Add(() => SolutionEvenFibonacciNumbers(11, 22));   // 4 = ... 
+            _listOfFunctions.Add(() => PrintFibSeq());                          // 5 = shows a fib seq
+            _listOfFunctions.Add(() => SolutionLargestPrimeFactor(11, 22));   // 6 = ... 
             // add new functions here //runSolutionArray1();
         }
 
         // quicker than typing "5" (or latest number)
         public void CurrentChallenge()
         {
-            SolutionEvenFibonacciNumbers();
+            //SolutionLargestPrimeFactor();
             Console.WriteLine();
         }
 
@@ -349,31 +351,44 @@ namespace Challenges
             find the sum of the even-valued terms.
             */
 
-            int numPastPast = _numPastPast;    // 0 - numPastPast
-            int numPast = _numPast;            // 1 - numPast
-            int numNext = 0;                   // numNext
-            int maxFib = 4000000;
-            int sumValue = 0;                  // 2 - first num is even
+            int limit = 4000000;
+            int a = _numPastPast;       // 0 - numPastPast
+            int b = _numPast;            // 1 - numPast
+            int c = 0;                   // numNext
+            int sum = 0;                  // 2 - first num is even
             
             // calculate numNext, move right/ update past numbers to generate a new next number
             // sum of even numbers, continue if numNext < 4,000,000
-            while (numNext <= maxFib)
+            while (c < limit) //while ((numPast + numPastPast) <= maxFib)
             {
-                numNext = numPast + numPastPast;
-                numPastPast = numPast;
-                numPast = numNext;
-
-                if (numNext <= maxFib && numNext % 2 == 0)
+                if (b % 2 == 0) //if (numNext % 2 == 0)
                 {
-                    sumValue += numNext;
+                    sum += b;
                 }
-            }
-            Console.WriteLine(sumValue); // 4613732
 
+                c = a + b;
+                a = b;
+                b = c;
+            }
+            Console.WriteLine($"Fib - limit: {limit}, a: {_numPastPast}, b: {_numPast}, sum: {sum}"); // 4613732
+
+            // further... every third fib is even
+            /* no need for if even check
+                while c<limit
+                 sum=sum+c
+                 a=b+c
+                 b=c+a
+                 c=a+b
+            */
+            // even further ... recursive relation?
             #endregion
             return 0;
         }
 
+        public void PrintFibSeq()
+        {
+            Console.WriteLine("{0}", string.Join(", ", FibSeq()));
+        }
         public int[] FibSeq(int _numPastPast = 0, int _numPast = 1, int _rotations = 10)
         {
             // Next number = past number + past past number
@@ -406,6 +421,149 @@ namespace Challenges
             return fibSeqArray; //Console.WriteLine("{0}", string.Join(", ", FibSeq()));
         }
 
+        public int SolutionLargestPrimeFactor(int _num1 = 0, int _num2 = 1)
+        {
+            #region Largest Prime Factor
+            /* Project Euler - Problem 3 - Largest prime factor
 
+            The prime factors of 13195 are 5, 7, 13 and 29.
+            What is the largest prime factor of the number 600851475143 ?
+            */
+
+            // prime number = a whole number greater than 1 that can not be made by multiplying other whole numbers
+            // 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31
+            //
+            // composit number = can make it by multiplying other whole numbers it is a Composite Number
+            // Factors = are the numbers you multiply together to get another number
+            // 2 x 3 = 6
+            //"Prime Factorization" is finding which prime numbers multiply together to make the original number.
+
+            // The prime factors of 13195 are 5, 7, 13 and 29. (5*7*13*29)
+            // 13195 / 29 = 445
+            // 445 / 13 = 35
+            // 35 / 7 = 5
+            
+
+
+            // calc prime numbers
+            int targetPrimeNum = 0; //15000 // 31 = prime
+            int primeNumStart = 2;
+            List<int> primeNumbers = new List<int>();
+            List<int> primeNumbersWorking = new List<int>();
+            List<int> primeNumbersUsed = new List<int>();
+            int targetPrimeFactorsNum = 13195; // 600851475143
+
+            // prime = num not made by others multiplying
+            // find if any numbers can multiply to make target number (if so then number is not prime)
+            // start with half of target
+            // then go down to 2
+
+
+
+            // go backwards from number and divide (start from half)
+            int halfOfTargetPrimeNum = 0;
+             // already rounds down odd number...? Convert.ToInt32(targetPrimeNum / 2);
+            bool isPrime = true;
+            //if (targetPrimeNum % targetPrimeNum / 2 == 0)
+
+            // find all primes of a primefactor
+            for (int i = primeNumStart; i < targetPrimeFactorsNum; i++)
+            {
+                targetPrimeNum = i;
+                halfOfTargetPrimeNum = targetPrimeNum / primeNumStart; // 2
+
+                // check if number is not a prime number
+                for (int j = halfOfTargetPrimeNum; j >= primeNumStart; j--) // from half going downwards
+                {                    
+                    // not prime check + early quit
+                    if ((targetPrimeNum % j) == 0) // 30 / 15 = 0, 31 / 15 = 1... // int tmpRemainder = (j % targetPrimeNum);
+                    {
+                        isPrime = false; // not a prime
+                        break;
+                    }
+                }
+                // number is prime if for loop is finished
+                if (isPrime)
+                {
+                    primeNumbers.Add(targetPrimeNum);
+                }
+                isPrime = true; // reset prime check for next loop
+            }
+
+            // calc prime factors
+            Console.WriteLine($"Prime Numbers of {targetPrimeFactorsNum}: ");
+            foreach (int primeNum in primeNumbers)
+            {
+                Console.Write($"{primeNum}, ");
+            }
+
+            // multiply prime numbers to see if they match tartegPrimeFactor
+            // divide by prime num then another prime num and again to end with a prime num?
+            // The prime factors of 13195 are 5, 7, 13 and 29. (5*7*13*29)
+
+
+            //targetPrimeFactorsNum = 100; 
+            // prime numbers of 100 = 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
+            //primeNumbers[primeNumbers.Count-1];// last prime number
+            int halfTarget = targetPrimeFactorsNum / 2;
+
+            // or /2, /2, /2 (until prime num)
+            // 1. prime numbers under half of target... "...43, 47" ... 47 x 2 (bottom up), 41 x 2 x 3
+            foreach (int primeNum in primeNumbers)
+            {
+                if (primeNum <= halfTarget)
+                {
+                    primeNumbersWorking.Add(primeNum);
+                }
+            }
+            // 2. each prime multiplied by a previous number (count up) "2 x 3 = 6"
+            //      if < target, multiply by another prime number (count up) "2 x 3(6) x 5(30)"
+            //      if num > target, change last, last multiplied prime number
+            //      if num = target, save sequence
+            foreach (int primeNum in primeNumbersWorking) // 2, 3, 5, 7, 11, 13, 17, 19,
+            {
+                int tmpNum = primeNum;
+                for (int i = 0; i < primeNumbersWorking.Count-1; i++) //.count?
+                {
+                    int j = i;
+                    while (tmpNum < targetPrimeFactorsNum)
+                    {
+                        primeNumbersUsed.Add(primeNumbersWorking[i]); // list of multiplied numbers (2, 3)
+                        tmpNum *= primeNumbersWorking[i]; // 2 x 2....
+                    }
+
+                    if (tmpNum > targetPrimeFactorsNum)
+                    {
+                        int last = primeNumbersUsed.Count-1;
+                        tmpNum /= primeNumbersUsed[primeNumbersUsed.Count - 1];
+                        primeNumbersUsed.RemoveAt(primeNumbersUsed.Count - 1);
+                        tmpNum /= primeNumbersUsed[primeNumbersUsed.Count - 1];
+                        primeNumbersUsed.RemoveAt(primeNumbersUsed.Count - 1);
+                        primeNumbersUsed.Add(primeNumbersWorking[i+j]); // out of range...
+                        tmpNum *= primeNumbersWorking[i+j];
+                        j++;
+                        //primeNumbersUsed.Clear();
+                    }
+
+                    if (tmpNum == targetPrimeFactorsNum)
+                    {
+                        Console.Write($"Used: "); // number found
+                        foreach (int primeNumU in primeNumbersUsed)
+                        {
+                            Console.Write($"{primeNumU}, ");
+                        }
+                        break;
+                    }
+                }
+            }
+            // 12 / 2 = 6, 6 / 2 = 3, 
+            // can use multiple of the same prime numbers
+            // if not whole number, stop
+            // 100 = 5 / 5 / 2 / 2
+            // 13195 = 5 × 7 × 13 × 29
+            // 500851475143 = 17 × 17 × 103 × 1153 × 14593
+            #endregion
+            return 0;
+        }
     }
 }
