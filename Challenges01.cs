@@ -16,7 +16,7 @@ namespace Challenges
             _listOfFunctions.Add(() => Solution100Doors());                     // 1 = ... //functions.Add(Solution100Doors);
             _listOfFunctions.Add(() => SolutionMultiplesOf3And5());             // 2 = ... 
             _listOfFunctions.Add(() => SolutionEvenFibonacciNumbers());         // 3 = ... 
-            _listOfFunctions.Add(() => SolutionEvenFibonacciNumbers(11, 22));   // 4 = ... 
+            _listOfFunctions.Add(() => SolutionEvenFibonacciNumbers(13, 21));   // 4 = ... 
             _listOfFunctions.Add(() => PrintFibSeq());                          // 5 = shows a fib seq
             _listOfFunctions.Add(() => SolutionLargestPrimeFactor(11, 22));   // 6 = ... 
             // add new functions here //runSolutionArray1();
@@ -356,7 +356,7 @@ namespace Challenges
             int b = _numPast;            // 1 - numPast
             int c = 0;                   // numNext
             int sum = 0;                  // 2 - first num is even
-            
+
             // calculate numNext, move right/ update past numbers to generate a new next number
             // sum of even numbers, continue if numNext < 4,000,000
             while (c < limit) //while ((numPast + numPastPast) <= maxFib)
@@ -364,23 +364,90 @@ namespace Challenges
                 if (b % 2 == 0) //if (numNext % 2 == 0)
                 {
                     sum += b;
+                    Console.Write($"{sum}, ");
                 }
-
                 c = a + b;
                 a = b;
                 b = c;
             }
+            Console.WriteLine($"");
             Console.WriteLine($"Fib - limit: {limit}, a: {_numPastPast}, b: {_numPast}, sum: {sum}"); // 4613732
-
-            // further... every third fib is even
-            /* no need for if even check
+            // further... every third fib is even, start with 1, 1
+            /* no need for if even check ..  1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89,
+            c=a+b
                 while c<limit
                  sum=sum+c
                  a=b+c
                  b=c+a
                  c=a+b
             */
-            // even further ... recursive relation?
+            // even further ... recursive relation F(n) = F(n-1) + F(n-2)       e.g. 8 = 5 + 3 
+            //                                  and F(n) = 4F(n-3) + F(n-6)     e.g. 89 = 84(21x4) + 5
+            //                                  and E(n) = 4E(n-1) + E(n-2)     e.g. 144 = 136(34x4) + 8
+            // fib seq = 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89,
+            // fib seq even =  2, 8, 34, 144
+            //
+            //            -2 -1 0
+            // a b c d e f g h i
+            //g = F(n-2)        h = F(n-1)      i = F(n) // F = Fib, n = number
+            //
+            //     -2    -1    0
+            // a b c d e f g h i
+            //c = E(n-2)        f = E(n-1)      i = E(n) // E = Even (fib)
+            //
+            // F(n) = F(n-1) + F(n-2) to prove E(n) = 4E(n-1) + E(n-2)
+            //      you can make F(n-1) with F(n-2) + F(n-3)     (f+g=h)
+            // F(n) = F(n-1) + F(n-2) =  
+            //      (convert n-1)       2F(n-2) + F(n-3) =  
+            //      (convert 2x n-2)    3F(n-3) + 2F(n-4) =
+            //      (convert n-4)       4F(n-3) + F(n-6)
+            // which also means E(n) = 4E(n-1) + E(n-2) 
+
+            /*
+            int increment = 0; // numbers in fib seq
+            int evenNumA = 0;
+            int evenNumB = 0;
+            int evenNumC = 0;
+            List<int> evenNums = new List<int>();
+            while (c < limit && evenNumC < limit) //while ((numPast + numPastPast) <= maxFib)
+            {
+                
+                if (increment > 2)
+                {
+                    //E(n) = 4E(n-1) + E(n-2)
+                    
+                    evenNumC = (evenNumB * 4) + evenNumA;
+                    if (evenNumC < limit)
+                    {
+                        evenNums.Add(sum);
+                        sum += evenNumC;
+                        evenNumA = evenNumB;
+                        evenNumB = evenNumC;
+
+                    }
+                }
+                else
+                {
+                    if (b % 2 == 0) //if (numNext % 2 == 0)
+                    {
+                        sum += b;
+                        if (increment == 1) evenNumA = b;
+                        if (increment == 2) evenNumB = b;
+                        increment++;
+                    }
+
+                    c = a + b;
+                    a = b;
+                    b = c;
+                }
+            }
+            Console.WriteLine($"Fib - limit: {limit}, a: {_numPastPast}, b: {_numPast}, sum: {sum}"); // 4613732
+            Console.Write($"Evens = ");
+            foreach (int evenNum in evenNums)
+            {
+                Console.Write($"{evenNum}, ");
+            }
+            */
             #endregion
             return 0;
         }
@@ -451,22 +518,21 @@ namespace Challenges
             List<int> primeNumbers = new List<int>();
             List<int> primeNumbersWorking = new List<int>();
             List<int> primeNumbersUsed = new List<int>();
-            int targetPrimeFactorsNum = 13195; // 600851475143
+            int targetPrimeFactorsNum = 13195; // primes = 5, 7, 13 and 29. // 600851475143
 
+            // check all primes of a number ...
+            // check if number is not a prime number
             // prime = num not made by others multiplying
             // find if any numbers can multiply to make target number (if so then number is not prime)
-            // start with half of target
-            // then go down to 2
+            // start with half of target - go backwards from half (down to 2) and divide
 
-
-
-            // go backwards from number and divide (start from half)
-            int halfOfTargetPrimeNum = 0;
-             // already rounds down odd number...? Convert.ToInt32(targetPrimeNum / 2);
-            bool isPrime = true;
+            // already rounds down odd number...? Convert.ToInt32(targetPrimeNum / 2);
             //if (targetPrimeNum % targetPrimeNum / 2 == 0)
 
-            // find all primes of a primefactor
+            int halfOfTargetPrimeNum = 0;
+            bool isPrime = true;
+
+            // find all primes of a number
             for (int i = primeNumStart; i < targetPrimeFactorsNum; i++)
             {
                 targetPrimeNum = i;
@@ -489,25 +555,41 @@ namespace Challenges
                 }
                 isPrime = true; // reset prime check for next loop
             }
-
-            // calc prime factors
+            
+            // all primes numbers of target number listed in primeNumbers
             Console.WriteLine($"Prime Numbers of {targetPrimeFactorsNum}: ");
             foreach (int primeNum in primeNumbers)
             {
                 Console.Write($"{primeNum}, ");
             }
 
-            // multiply prime numbers to see if they match tartegPrimeFactor
-            // divide by prime num then another prime num and again to end with a prime num?
-            // The prime factors of 13195 are 5, 7, 13 and 29. (5*7*13*29)
 
 
-            //targetPrimeFactorsNum = 100; 
+            // 1. only prime numbers under half of target (100 = 2, 3...43, 47"
+            // (start with highest, then bottom up, (47x2=94...47x2x2=188, 47x3=141, 41x2
+            // each prime multiplied by a previous number (count up) "2 x 3 = 6"
+            //      if < target, multiply by another prime number (count up) "2 x 3(6) x 5(30)"
+            //      if num > target, change last, last multiplied prime number
+            //      if num = target, save sequence
+            // multiply prime numbers (primeNumbers list) to see if they match targetPrimeFactorsNum
+
+            // 2. divide by prime num then another prime num and again to end with a prime num?
+            // or /2, /2, /2 (until prime num)
+
+            // 3. targetPrimeFactorsNum = 100; 
             // prime numbers of 100 = 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
-            //primeNumbers[primeNumbers.Count-1];// last prime number
+            // primeNumbers[primeNumbers.Count-1];// last prime number
+
+
+            // calc prime factors
             int halfTarget = targetPrimeFactorsNum / 2;
 
-            // or /2, /2, /2 (until prime num)
+
+
+
+
+
+            
             // 1. prime numbers under half of target... "...43, 47" ... 47 x 2 (bottom up), 41 x 2 x 3
             foreach (int primeNum in primeNumbers)
             {
@@ -556,6 +638,7 @@ namespace Challenges
                     }
                 }
             }
+            // The prime factors of 13195 are 5, 7, 13 and 29. (5*7*13*29)
             // 12 / 2 = 6, 6 / 2 = 3, 
             // can use multiple of the same prime numbers
             // if not whole number, stop
