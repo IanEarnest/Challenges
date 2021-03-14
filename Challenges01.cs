@@ -25,7 +25,7 @@ namespace Challenges
         // quicker than typing "5" (or latest number)
         public void CurrentChallenge()
         {
-            //SolutionLargestPrimeFactor();
+            SolutionLargestPrimeFactor();
             Console.WriteLine();
         }
 
@@ -497,6 +497,7 @@ namespace Challenges
             What is the largest prime factor of the number 600851475143 ?
             */
 
+            //https://www.mathsisfun.com/prime-factorization.html
             // prime number = a whole number greater than 1 that can not be made by multiplying other whole numbers
             // 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31
             //
@@ -509,7 +510,7 @@ namespace Challenges
             // 13195 / 29 = 445
             // 445 / 13 = 35
             // 35 / 7 = 5
-            
+
 
 
             // calc prime numbers
@@ -521,10 +522,9 @@ namespace Challenges
             int targetPrimeFactorsNum = 13195; // primes = 5, 7, 13 and 29. // 600851475143
 
             // check all primes of a number ...
-            // check if number is not a prime number
-            // prime = num not made by others multiplying
-            // find if any numbers can multiply to make target number (if so then number is not prime)
-            // start with half of target - go backwards from half (down to 2) and divide
+            // check if number is not a prime number // prime = num not made by others multiplying
+                // start with half of target - go backwards from half (down to 2) and divide
+                // find if any numbers can multiply to make target number (if so then number is not prime)
 
             // already rounds down odd number...? Convert.ToInt32(targetPrimeNum / 2);
             //if (targetPrimeNum % targetPrimeNum / 2 == 0)
@@ -557,17 +557,17 @@ namespace Challenges
             }
             
             // all primes numbers of target number listed in primeNumbers
-            Console.WriteLine($"Prime Numbers of {targetPrimeFactorsNum}: ");
-            foreach (int primeNum in primeNumbers)
-            {
-                Console.Write($"{primeNum}, ");
-            }
+            //Console.WriteLine($"Prime Numbers of {targetPrimeFactorsNum}: ");
+            //foreach (int primeNum in primeNumbers)
+            //{
+            //    Console.Write($"{primeNum}, ");
+            //}
 
 
 
             // 1. only prime numbers under half of target (100 = 2, 3...43, 47"
-            // (start with highest, then bottom up, (47x2=94...47x2x2=188, 47x3=141, 41x2
             // each prime multiplied by a previous number (count up) "2 x 3 = 6"
+                // (start with highest, then bottom up, (47x2=94...47x2x2=188, 47x3=141, 41x2
             //      if < target, multiply by another prime number (count up) "2 x 3(6) x 5(30)"
             //      if num > target, change last, last multiplied prime number
             //      if num = target, save sequence
@@ -582,7 +582,7 @@ namespace Challenges
 
 
             // calc prime factors
-            int halfTarget = targetPrimeFactorsNum / 2;
+            int halfOfTargetPrimeFactorsNum = targetPrimeFactorsNum / 2;
 
 
 
@@ -593,48 +593,109 @@ namespace Challenges
             // 1. prime numbers under half of target... "...43, 47" ... 47 x 2 (bottom up), 41 x 2 x 3
             foreach (int primeNum in primeNumbers)
             {
-                if (primeNum <= halfTarget)
+                if (primeNum <= halfOfTargetPrimeFactorsNum)
                 {
                     primeNumbersWorking.Add(primeNum);
                 }
             }
+
+            // testing
+            //Console.WriteLine($"Prime Numbers under half of {targetPrimeFactorsNum}: ");
+            //foreach (int primeNum in primeNumbersWorking)
+            //{
+            //    Console.Write($"{primeNum}, ");
+            //}
+
             // 2. each prime multiplied by a previous number (count up) "2 x 3 = 6"
             //      if < target, multiply by another prime number (count up) "2 x 3(6) x 5(30)"
             //      if num > target, change last, last multiplied prime number
             //      if num = target, save sequence
-            foreach (int primeNum in primeNumbersWorking) // 2, 3, 5, 7, 11, 13, 17, 19,
+
+            // prime nums half target = 2, 3....
+            // < target, x prime until too high, remove last, x higher prime
+            // 2 x 2 x 2... 2 x 3.... 3 x 2
+            //13195 = 5 × 7 × 13 × 29
+
+
+            // 2, 3, 5, 7, 11, 13, 17, 19, (each of these)
+            foreach (int startingPrimeNum in primeNumbersWorking) 
             {
-                int tmpNum = primeNum;
-                for (int i = 0; i < primeNumbersWorking.Count-1; i++) //.count?
+                int tmpTargetNum = startingPrimeNum; // 2....3....
+                primeNumbersUsed.Add(startingPrimeNum); // add first number
+
+                // 2 until end?
+                for (int i = 0; i < primeNumbersWorking.Count - 1; i++) //.count?
                 {
                     int j = i;
-                    while (tmpNum < targetPrimeFactorsNum)
-                    {
-                        primeNumbersUsed.Add(primeNumbersWorking[i]); // list of multiplied numbers (2, 3)
-                        tmpNum *= primeNumbersWorking[i]; // 2 x 2....
-                    }
+                    bool end = false;
 
-                    if (tmpNum > targetPrimeFactorsNum)
+                    while (!end)
                     {
-                        int last = primeNumbersUsed.Count-1;
-                        tmpNum /= primeNumbersUsed[primeNumbersUsed.Count - 1];
-                        primeNumbersUsed.RemoveAt(primeNumbersUsed.Count - 1);
-                        tmpNum /= primeNumbersUsed[primeNumbersUsed.Count - 1];
-                        primeNumbersUsed.RemoveAt(primeNumbersUsed.Count - 1);
-                        primeNumbersUsed.Add(primeNumbersWorking[i+j]); // out of range...
-                        tmpNum *= primeNumbersWorking[i+j];
-                        j++;
-                        //primeNumbersUsed.Clear();
-                    }
-
-                    if (tmpNum == targetPrimeFactorsNum)
-                    {
-                        Console.Write($"Used: "); // number found
-                        foreach (int primeNumU in primeNumbersUsed)
+                        // 2 + 2 (when first number changes, end/ iterate)
+                        while (tmpTargetNum < targetPrimeFactorsNum)
                         {
-                            Console.Write($"{primeNumU}, ");
+                            //if < target, multiply by another prime number (count up) "2 x 3(6) x 5(30)"
+                            primeNumbersUsed.Add(primeNumbersWorking[j]); // list of multiplied numbers (2, 3)
+                            tmpTargetNum *= primeNumbersWorking[j]; // 2 x 2....
+
+                            //Console.WriteLine($"({tmpTargetNum})... "); // testing
+                            //foreach (int primeNumU in primeNumbersUsed)
+                            //{
+                            //    Console.Write($"{primeNumU}, ");
+                            //}
+                        }// 2 x  = 6... too high 4
+                        //
+
+                        // 2 x 2 x 999999 = too high
+                        if (tmpTargetNum > targetPrimeFactorsNum)
+                        {
+                            //if num > target, change last, last multiplied prime number
+                            if (primeNumbersUsed.Count < 2) //2? or 3 (2 + 2 + 2 into 2)
+                            {
+                                end = true; // 2 + 2 (when first number changes, end/ iterate)
+                                primeNumbersUsed.Clear();
+                                tmpTargetNum = startingPrimeNum;
+                            }
+                            else // here last....
+                            {
+                                
+                                //tmpNum /= primeNumbersUsed[primeNumbersUsed.Count - 1];
+                                primeNumbersUsed.RemoveAt(primeNumbersUsed.Count - 1); // exception, could not remove
+                                //tmpNum /= primeNumbersUsed[primeNumbersUsed.Count - 1];
+                                primeNumbersUsed.RemoveAt(primeNumbersUsed.Count - 1);
+                                tmpTargetNum = startingPrimeNum;
+                                foreach (int primeNumUsed in primeNumbersUsed)
+                                {
+                                    tmpTargetNum *= primeNumUsed;
+                                }
+                                //primeNumbersUsed.Add(primeNumbersWorking[i + j]); // out of range...
+                                //tmpNum *= primeNumbersWorking[i + j];
+                                j++;
+                                // go back to start of while...
+                                //primeNumbersUsed.Clear();
+
+                            }
                         }
-                        break;
+                        else if (tmpTargetNum == targetPrimeFactorsNum)
+                        {
+                            Console.WriteLine($"Used: "); // number found
+                            int highest = 0;
+                            foreach (int primeNumU in primeNumbersUsed)
+                            {
+
+                                Console.Write($"{primeNumU}, ");
+                                if (highest < primeNumU)
+                                {
+                                    highest = primeNumU;
+                                }
+                            }
+                            Console.Write($"Highest prime: {highest}, ");
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"else?");
+                        }
                     }
                 }
             }
